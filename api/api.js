@@ -1,8 +1,13 @@
 import axios from "axios";
 
 const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+const countriesBaseUrl = "https://restcountries.com/v3.1";
 
 const APIx = axios.create({ baseURL: baseUrl, timeout: 15000 });
+export const COUNTRYAPI = axios.create({
+  baseURL: countriesBaseUrl,
+  timeout: 15000,
+});
 
 APIx.interceptors.request.use((req) => {
   if (localStorage.getItem("accessToken")) {
