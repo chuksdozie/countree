@@ -7,36 +7,63 @@ import {
   useGetAllCountries,
   useGetAllCountriesByName,
 } from "@/hooks/countries/country.hook";
+import Link from "next/link";
 
-const CountryCard = () => {
+const CountryCard = ({ country }) => {
   return (
     <div className="body">
       <div className="left">
-        <p className="name">Country Name</p>
-        <p className="sub-info">Capital - Capital * Continent - Continent</p>
-        <p className="sub-info">
-          Population - Population * Timezones - Timezones
+        <p className="name">
+          {country?.name?.common} {country?.flag}
         </p>
-        <p className="name">About</p>
+        <p className="name">{country?.name?.official}</p>
+        <p className="sub-info">
+          Capital - {country?.capital?.[0]} ----- Continent - {country?.region}
+        </p>
+        <p className="sub-info">
+          Population - {country?.population} ----- Timezones -{" "}
+          {country?.timezones?.[0]}
+        </p>
+        <p className="sub-info">
+          Language - {Object.values(country?.languages)?.[0]} ----- Week begins
+          on - {country?.startOfWeek}
+        </p>
+        <Link href={country?.maps?.googleMaps} target="_blank">
+          <p className="map">View {country?.name?.common} on Google Maps</p>
+        </Link>
+
+        {/* <p className="name">About</p>
         <p className="sub-info">
           fghj jhbjh jhvnb kgvbjhgcvbjgfhcvb bgc bmhj bhgjhg jgfhgcvb
           gvybiurefbwer wkerhfweudw efwjcesf wdsbc wdfsjcwjehfc whisdf wjahfwehj
           fweifbw emffc wrsdkf rwkhsfvwr cdjhsfnbfcw hbfedf cwhsfwjef jwhfijwe
           wjeihfb wsdnfj
-        </p>
+        </p> */}
       </div>
       <div className="right">
-        <img src="" alt="flag" className="flag" />
-        <img src="" alt="coat of arms" className="coat" />
+        <div>
+          <img src="" alt="flag" className="flag" src={country?.flags?.png} />
+          <p className="sub-info">Flag of {country?.name?.common}</p>
+        </div>
+        <div>
+          <img
+            src=""
+            alt="coat of arms"
+            className="coat"
+            src={country?.coatOfArms?.png}
+          />
+          <p className="sub-info">Coat of Arms</p>
+        </div>
       </div>
     </div>
   );
 };
 
 const CountreeLayout = () => {
-  const { data } = useGetAllCountries();
-  const { data: yes } = useGetAllCountriesByName("ger");
-  console.log({ dataxxxxxxx: data, yes });
+  // const { data } = useGetAllCountries();
+  const { data } = useGetAllCountriesByName("ger");
+  const countries = data?.data;
+  console.log({ dataxxxxxxx: data });
   return (
     <Wrapper>
       <div className="header">
@@ -49,9 +76,9 @@ const CountreeLayout = () => {
           <p className="hint">Press Enter to search</p>
         </div>
       </div>
-      <CountryCard />
-      <CountryCard />
-      <CountryCard />
+      {countries?.map((country, index) => (
+        <CountryCard key={`${country?.area}${index}`} country={country} />
+      ))}
     </Wrapper>
   );
 };
@@ -120,10 +147,16 @@ const Wrapper = styled.div`
         color: ${colors.gray500};
         line-height: 20px;
       }
+      .map {
+        font-size: ${fontSizes.s};
+        color: ${colors.primary600};
+        font-weight: 600;
+        line-height: 20px;
+      }
     }
     .right {
       display: flex;
-      gap: 1rem;
+      gap: 3rem;
       justify-content: flex-end;
       flex: 3;
       img {
