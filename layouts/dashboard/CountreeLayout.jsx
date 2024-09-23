@@ -64,7 +64,7 @@ const CountryCard = ({ country }) => {
 
 const CountreeLayout = () => {
   const [searchValue, setSearchValue] = useState("");
-  const { data } = useGetAllCountries();
+  const { data, isLoading } = useGetAllCountries();
   const [countries, setCountries] = useState([]);
   // const { data } = useGetAllCountriesByName(searchValue);
   // const countries = data?.data;
@@ -112,6 +112,7 @@ const CountreeLayout = () => {
           <p className="hint">Press Enter to search</p>
         </div>
       </div>
+      {isLoading && <p>Loading, Please wait...</p>}
       {countries?.map((country, index) => (
         <CountryCard key={`${country?.area}${index}`} country={country} />
       ))}
