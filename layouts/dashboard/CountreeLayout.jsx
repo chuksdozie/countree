@@ -1,6 +1,6 @@
 import { colors } from "@/constants/colors";
 import { fontSizes } from "@/constants/fontSizes";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FaStreetView } from "react-icons/fa";
 import {
@@ -25,8 +25,9 @@ const CountryCard = ({ country }) => {
           {country?.timezones?.[0]}
         </p>
         <p className="sub-info">
-          Language - {Object.values(country?.languages)?.[0]} ----- Week begins
-          on - {country?.startOfWeek}
+          Language -{" "}
+          {country?.languages?.[0] && Object?.values(country?.languages)?.[0]}{" "}
+          ----- Week begins on - {country?.startOfWeek}
         </p>
         <Link href={country?.maps?.googleMaps} target="_blank">
           <p className="map">View {country?.name?.common} on Google Maps</p>
@@ -45,25 +46,47 @@ const CountryCard = ({ country }) => {
           <img src="" alt="flag" className="flag" src={country?.flags?.png} />
           <p className="sub-info">Flag of {country?.name?.common}</p>
         </div>
-        <div>
-          <img
-            src=""
-            alt="coat of arms"
-            className="coat"
-            src={country?.coatOfArms?.png}
-          />
-          <p className="sub-info">Coat of Arms</p>
-        </div>
+        {country?.coatOfArms?.png && (
+          <div>
+            <img
+              src=""
+              alt="coat of arms"
+              className="coat"
+              src={country?.coatOfArms?.png}
+            />
+            <p className="sub-info">Coat of Arms</p>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 const CountreeLayout = () => {
-  // const { data } = useGetAllCountries();
-  const { data } = useGetAllCountriesByName("ger");
-  const countries = data?.data;
-  console.log({ dataxxxxxxx: data });
+  const [searchValue, setSearchValue] = useState("");
+  const { data } = useGetAllCountries();
+  const [countries, setCountries] = useState([]);
+  // const { data } = useGetAllCountriesByName(searchValue);
+  // const countries = data?.data;
+  // const countries = [];
+  // console.log({ dataxxxxxxx: data });
+
+  useEffect(() => {
+    if (!searchValue && data?.data) {
+      setCountries(data?.data);
+    } else if (searchValue && data?.data) {
+      const newArray = data?.data?.filter(
+        (country) =>
+          country?.name?.common.toLowerCase() === searchValue.toLowerCase() ||
+          country?.name?.common
+            .toLowerCase()
+            .includes(searchValue.toLowerCase())
+      );
+      setCountries(newArray);
+    } else {
+      setCountries([]);
+    }
+  }, [data, searchValue]);
   return (
     <Wrapper>
       <div className="header">
@@ -72,7 +95,20 @@ const CountreeLayout = () => {
           Countree
         </h4>
         <div>
-          <input type="text" placeholder="Search" />
+          <input
+            type="text"
+            placeholder="Search"
+            onKeyUp={(e) => {
+              if (e.key === "Enter") {
+                console.log(e.target.value);
+                setSearchValue(e.target.value);
+              }
+            }}
+            onChange={(e) => {
+              console.log(e.target.value);
+              setSearchValue(e.target.value);
+            }}
+          />
           <p className="hint">Press Enter to search</p>
         </div>
       </div>
